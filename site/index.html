@@ -1,37 +1,1472 @@
 <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика онлайн - Репетитор по физике</title>
+    <style>
+        :root {
+            --color-primary: #1a3f4d;
+            --color-secondary: #2d66a6;
+            --color-accent: #52f082;
+            --color-accent-light: #82ff9a;
+            --color-bg: #0f1419;
+            --color-surface: #1a1f26;
+            --color-text: #e8e8e8;
+            --color-text-secondary: #a8a8a8;
+            --color-border: #2a2f36;
+            --color-success: #52f082;
+            --color-error: #ff5454;
+            --color-warning: #ffd700;
+        }
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>NGINX on Railway</title>
-    <meta name="description" content="Choo Choo!" />
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
 
-    <link rel="stylesheet" href="/styles.css?v=1.0" />
-  </head>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-  <body>
-    <main>
-      <img
-        src="https://railway.app/brand/logo-light.svg"
-        alt="Railway logo"
-        class="logo"
-      />
+        /* Header & Nav */
+        header {
+            background: rgba(26, 31, 38, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-      <h1>NGINX on Railway</h1>
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            position: relative;
+        }
 
-      <p>
-        Choo Choo! This is an example of an NGINX static site running on
-        Railway.
-        <a
-          href="https://github.com/railwayapp/starters/tree/master/examples/nginx"
-          >View source</a
-        >.
-      </p>
-    </main>
+        .logo {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            font-weight: 700;
+            color: var(--color-accent);
+            text-decoration: none;
+        }
 
-    <script src="/script.js"></script>
-  </body>
+        .nav-links {
+            display: flex;
+            gap: clamp(0.8rem, 2vw, 2rem);
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-text);
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: pointer;
+            font-size: clamp(0.75rem, 1.8vw, 1rem);
+        }
+
+        .nav-links a:hover {
+            color: var(--color-accent);
+        }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 400px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(26, 31, 38, 0.98);
+                border-bottom: 1px solid var(--color-border);
+                padding: 1rem 0;
+                gap: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+            }
+
+            .nav-links.active {
+                max-height: 500px;
+            }
+
+            .nav-links li {
+                padding: 0;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 0.75rem 1.5rem;
+                border-bottom: 1px solid var(--color-border);
+            }
+
+            .nav-links a:hover {
+                background: rgba(82, 240, 130, 0.1);
+            }
+
+            nav {
+                position: relative;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, rgba(26, 63, 77, 0.4) 0%, rgba(45, 102, 166, 0.2) 100%);
+            border-bottom: 2px solid var(--color-accent);
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
+            background: linear-gradient(135deg, #82ff9a, var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: clamp(0.85rem, 1.8vw, 1.2rem);
+            color: var(--color-text-secondary);
+            margin-bottom: clamp(1rem, 2vw, 2rem);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: clamp(0.4rem, 1.5vw, 0.5rem) clamp(0.8rem, 2vw, 1.2rem);
+            border: none;
+            border-radius: 6px;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: var(--color-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(82, 240, 130, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(82, 240, 130, 0.15);
+            color: var(--color-accent);
+            border: 2px solid var(--color-accent);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(82, 240, 130, 0.25);
+        }
+
+        .hero-image {
+            position: relative;
+            height: clamp(250px, 40vw, 400px);
+            background: linear-gradient(135deg, rgba(82, 240, 130, 0.1), rgba(45, 102, 166, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+        }
+
+        .hero-image::before {
+            content: '📷';
+            font-size: 5rem;
+            opacity: 0.5;
+        }
+
+        /* Sections */
+        section {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        section h2 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: clamp(1.5rem, 3vw, 2rem);
+            color: var(--color-accent);
+            text-align: center;
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
+            color: var(--color-text);
+        }
+
+        .about-text p {
+            margin-bottom: 1rem;
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            font-size: clamp(0.85rem, 1.8vw, 1rem);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Classes Grid */
+        .classes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .class-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: clamp(1rem, 2vw, 1.5rem);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .class-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 8px 20px rgba(82, 240, 130, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .class-title {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        .class-grade {
+            background: rgba(82, 240, 130, 0.2);
+            color: var(--color-accent);
+            padding: clamp(0.2rem, 1vw, 0.3rem) clamp(0.5rem, 1.5vw, 0.8rem);
+            border-radius: 20px;
+            font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+        }
+
+        .class-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin: 1rem 0;
+            color: var(--color-text-secondary);
+        }
+
+        .class-info-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .class-label {
+            font-weight: 500;
+        }
+
+        .class-places {
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+
+        .class-places.full {
+            color: var(--color-error);
+        }
+
+        /* Calendar */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: clamp(0.25rem, 2vw, 0.5rem);
+            margin: clamp(1rem, 4vw, 2rem) 0;
+        }
+
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: clamp(0.25rem, 2vw, 0.5rem);
+            margin-bottom: clamp(0.5rem, 3vw, 1rem);
+        }
+
+        .day-label {
+            text-align: center;
+            font-weight: 600;
+            color: var(--color-accent);
+            padding: clamp(0.3rem, 1vw, 0.5rem);
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--color-surface);
+            font-size: clamp(0.7rem, 2vw, 0.95rem);
+            min-height: clamp(2.2rem, 8vw, 3rem);
+        }
+
+        .calendar-day.available {
+            cursor: pointer;
+        }
+
+        .calendar-day.available:hover {
+            border-color: var(--color-accent);
+            background: rgba(82, 240, 130, 0.1);
+        }
+
+        .calendar-day.available.selected {
+            background: var(--color-accent);
+            color: var(--color-primary);
+            border-color: var(--color-accent);
+            font-weight: 600;
+        }
+
+        .calendar-day.booked {
+            background: rgba(255, 84, 84, 0.2);
+            border-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .calendar-day.empty {
+            opacity: 0.3;
+        }
+
+        .time-slot {
+            padding: clamp(0.4rem, 1.5vw, 0.6rem);
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+            font-weight: 500;
+            min-height: clamp(1.8rem, 5vw, 2.5rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .time-slot:hover {
+            border-color: var(--color-accent);
+            background: rgba(82, 240, 130, 0.1);
+        }
+
+        .time-slot.selected {
+            background: var(--color-accent);
+            color: var(--color-primary);
+            border-color: var(--color-accent);
+            font-weight: 600;
+        }
+
+        .time-slot.booked {
+            background: rgba(255, 84, 84, 0.2);
+            border-color: var(--color-error);
+            color: var(--color-error);
+            cursor: not-allowed;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--color-text);
+            font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: clamp(0.5rem, 1.5vw, 0.75rem);
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-text);
+            font-family: inherit;
+            transition: border-color 0.3s;
+            font-size: clamp(0.8rem, 1.8vw, 1rem);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--color-surface);
+            border: 1px solid var(--color-accent);
+            border-radius: 12px;
+            padding: clamp(1rem, 4vw, 2rem);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--color-text);
+            cursor: pointer;
+        }
+
+        /* Reviews */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .review-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: clamp(1rem, 2vw, 1.5rem);
+        }
+
+        .review-stars {
+            color: var(--color-warning);
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            margin-bottom: clamp(0.3rem, 1vw, 0.5rem);
+        }
+
+        .review-text {
+            color: var(--color-text-secondary);
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
+            line-height: 1.8;
+            font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: var(--color-accent);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .review-grade {
+            font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+            color: var(--color-text-secondary);
+        }
+
+        /* FAQ */
+        .faq-item {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: clamp(0.75rem, 2vw, 1.5rem);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: background 0.3s;
+            font-size: clamp(0.85rem, 1.8vw, 1rem);
+            gap: clamp(0.5rem, 1vw, 1rem);
+            flex-wrap: wrap;
+        }
+
+        .faq-question:hover {
+            background: rgba(82, 240, 130, 0.1);
+        }
+
+        .faq-arrow {
+            transition: transform 0.3s;
+        }
+
+        .faq-answer {
+            display: none;
+            padding: clamp(1rem, 2vw, 1.5rem);
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-item.active .faq-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Test Section */
+        .test-container {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: clamp(1rem, 4vw, 2rem);
+            margin-bottom: clamp(1rem, 3vw, 2rem);
+        }
+
+        .test-question {
+            margin-bottom: 2rem;
+        }
+
+        .test-question h4 {
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
+            color: var(--color-text);
+            font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .test-option {
+            padding: clamp(0.6rem, 1.5vw, 0.75rem) clamp(0.8rem, 2vw, 1rem);
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+        }
+
+        .test-option:hover {
+            border-color: var(--color-accent);
+        }
+
+        .test-option input {
+            margin-right: 0.5rem;
+        }
+
+        .test-result {
+            display: none;
+            background: rgba(82, 240, 130, 0.1);
+            border: 1px solid var(--color-accent);
+            border-radius: 12px;
+            padding: clamp(1rem, 3vw, 2rem);
+            text-align: center;
+            margin-top: clamp(1rem, 3vw, 2rem);
+        }
+
+        .test-result.active {
+            display: block;
+        }
+
+        .test-result h3 {
+            color: var(--color-accent);
+            margin-bottom: clamp(0.75rem, 1.5vw, 1rem);
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--color-text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content, .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-image {
+                height: 250px;
+            }
+
+            section h2 {
+                font-size: 1.8rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .time-slot {
+                padding: clamp(0.4rem, 1.5vw, 0.6rem);
+                font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: clamp(1rem, 4vw, 2rem);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calendar-grid, .calendar-header {
+                gap: clamp(0.15rem, 1.5vw, 0.3rem);
+            }
+
+            .day-label {
+                font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+                padding: clamp(0.2rem, 0.8vw, 0.3rem);
+            }
+
+            .calendar-day {
+                min-height: clamp(1.8rem, 8vw, 2.5rem);
+                font-size: clamp(0.65rem, 2vw, 0.85rem);
+                border-width: 1px;
+            }
+
+            .time-slot {
+                padding: clamp(0.4rem, 1.5vw, 0.5rem);
+                font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+                min-height: 2rem;
+            }
+
+            section {
+                padding: clamp(2rem, 5vw, 4rem) 0;
+            }
+
+            .container {
+                padding: 0 clamp(10px, 3vw, 20px);
+            }
+        }
+
+        /* Success Animation */
+        .success-message {
+            background: rgba(82, 240, 130, 0.2);
+            border: 2px solid var(--color-success);
+            color: var(--color-success);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .success-message.active {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">⚛️ Физика онлайн</div>
+                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a onclick="scrollToSection('hero'); closeMenu();">Главная</a></li>
+                    <li><a onclick="scrollToSection('about'); closeMenu();">Обо мне</a></li>
+                    <li><a onclick="scrollToSection('classes'); closeMenu();">Занятия</a></li>
+                    <li><a onclick="scrollToSection('test'); closeMenu();">Диагностика</a></li>
+                    <li><a onclick="scrollToSection('reviews'); closeMenu();">Отзывы</a></li>
+                    <li><a onclick="scrollToSection('faq'); closeMenu();">FAQ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div>
+                    <h1>Физика, которую реально понимают</h1>
+                    <p>Занятия для школьников 7–10 классов. Без зубрежки, с фокусом на глубокое понимание.</p>
+                    <div class="cta-buttons">
+                        <button class="btn btn-primary" onclick="openGroupModal()">Групповое занятие</button>
+                        <button class="btn btn-secondary" onclick="openIndividualModal()">Индивидуальное занятие</button>
+                    </div>
+                </div>
+                <div class="hero-image"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <h2>Обо мне</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Мой подход</h3>
+                    <p><strong>Я верю:</strong> каждый может понимать физику. Не нужно зубрить формулы — нужно понимать, откуда они берутся и зачем нужны.</p>
+                    <p><strong>Опыт:</strong> 7+ лет преподавания, сотни довольных учеников. Я работаю с разными стилями обучения и всегда нахожу подход.</p>
+                    <p><strong>Результаты:</strong> 90% моих учеников говорят, что начали понимать тему уже на первом занятии.</p>
+                    <p><strong>Формат:</strong> интерактивные занятия, реальные примеры, много практики. После каждого занятия — запись, материалы и домашнее задание.</p>
+                </div>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Classes Section -->
+    <section id="classes">
+        <div class="container">
+            <h2>Расписание занятий</h2>
+            
+            <!-- Tabs -->
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; justify-content: center;">
+                <button class="btn btn-primary" onclick="switchTab('group')" id="groupTab">Групповые</button>
+                <button class="btn btn-secondary" onclick="switchTab('individual')" id="individualTab">Индивидуальные</button>
+            </div>
+
+            <!-- Group Classes -->
+            <div id="groupContent">
+                <div class="classes-grid" id="groupClasses"></div>
+            </div>
+
+            <!-- Individual Classes -->
+            <div id="individualContent" style="display: none;">
+                <h3 style="text-align: center; margin-bottom: 1rem; font-size: clamp(1rem, 2.5vw, 1.3rem);">Выберите дату и время</h3>
+                <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: clamp(1rem, 3vw, 2rem);">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="color: var(--color-accent); font-weight: 600;">Месяц и год</label>
+                        <div style="display: flex; gap: clamp(0.25rem, 2vw, 0.4rem); margin-top: clamp(0.3rem, 2vw, 0.5rem); align-items: center;">
+                            <button class="btn btn-secondary" onclick="previousMonth()" style="flex: 1; min-width: 60px; padding: clamp(0.4rem, 2vw, 0.6rem); font-size: clamp(0.8rem, 2.5vw, 1.1rem); border-radius: 4px; line-height: 1.2; font-weight: 700;">← Назад</button>
+                            <div style="flex: 1.5; text-align: center; padding: clamp(0.4rem, 2vw, 0.6rem) clamp(0.5rem, 2vw, 1rem); background: var(--color-bg); border-radius: 4px; border: 1px solid var(--color-border); font-size: clamp(0.75rem, 2vw, 0.95rem);">
+                                <span id="currentMonth" style="font-weight: 600;"></span>
+                            </div>
+                            <button class="btn btn-secondary" onclick="nextMonth()" style="flex: 1; min-width: 60px; padding: clamp(0.4rem, 2vw, 0.6rem); font-size: clamp(0.8rem, 2.5vw, 1.1rem); border-radius: 4px; line-height: 1.2; font-weight: 700;">Вперёд →</button>
+                        </div>
+                    </div>
+                    <div class="calendar-header">
+                        <div class="day-label">Пн</div>
+                        <div class="day-label">Вт</div>
+                        <div class="day-label">Ср</div>
+                        <div class="day-label">Чт</div>
+                        <div class="day-label">Пт</div>
+                        <div class="day-label">Сб</div>
+                        <div class="day-label">Вс</div>
+                    </div>
+                    <div class="calendar-grid" id="calendar"></div>
+                    <div id="timeSlotsContainer" style="margin-top: clamp(1rem, 2vw, 2rem); padding-top: clamp(1rem, 2vw, 2rem); border-top: 1px solid var(--color-border); display: none;">
+                        <label style="color: var(--color-accent); font-weight: 600; display: block; margin-bottom: clamp(0.75rem, 1.5vw, 1rem); font-size: clamp(0.85rem, 1.8vw, 1rem);">Выберите время для <span id="selectedDateDisplay"></span></label>
+                        <div id="timeSlots" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(90px, 20vw, 120px), 1fr)); gap: clamp(0.5rem, 1.5vw, 0.8rem);"></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="openIndividualModal()" style="width: 100%; margin-top: 1.5rem; padding: 0.6rem;" id="confirmDateBtn" disabled>Продолжить с выбранным временем</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Test Section -->
+    <section id="test">
+        <div class="container">
+            <h2>Бесплатная диагностика</h2>
+            <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 2rem;">Узнайте свой уровень знаний. Это поможет мне подобрать идеальный подход к обучению.</p>
+            
+            <div class="test-container">
+                <div id="testQuestions"></div>
+                <button class="btn btn-primary" onclick="submitTest()" style="width: 100%; padding: 1rem;" id="submitTestBtn">Узнать результат</button>
+                <div class="test-result" id="testResult"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews">
+        <div class="container">
+            <h2>Отзывы учеников</h2>
+            <div class="reviews-grid" id="reviewsContainer"></div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq">
+        <div class="container">
+            <h2>Часто задаваемые вопросы</h2>
+            <div id="faqContainer"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Физика онлайн. Все права защищены.</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">Контакты: +7 (999) 123-45-67 | @physics_tutor_tg</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <h3 id="modalTitle" style="color: var(--color-accent); margin-bottom: 1.5rem;"></h3>
+            
+            <form id="bookingForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label for="studentName">Имя ребёнка *</label>
+                    <input type="text" id="studentName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="grade">Класс *</label>
+                    <select id="grade" required>
+                        <option value="">Выберите класс</option>
+                        <option value="7">7 класс</option>
+                        <option value="8">8 класс</option>
+                        <option value="9">9 класс</option>
+                        <option value="10">10 класс</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact">Telegram (@username) или телефон *</label>
+                    <input type="text" id="contact" placeholder="@username или +7 9XX XXX XXXX" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="goal">Цель / комментарий (опционально)</label>
+                    <textarea id="goal" placeholder="Напишите, что вас интересует или в чём сложность"></textarea>
+                </div>
+
+                <div id="selectedClassInfo" style="background: rgba(82, 240, 130, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; display: none;">
+                    <p id="classInfoText" style="color: var(--color-text-secondary); margin: 0;"></p>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">Записаться</button>
+                <div class="success-message" id="successMessage">✓ Спасибо! Я свяжусь с вами в течение 2 часов для подтверждения и обсуждения деталей.</div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const groupClasses = [
+            {
+                id: 1,
+                title: 'Механика: Движение и силы',
+                grade: '7-8',
+                date: '2026-01-05',
+                time: '17:00',
+                duration: '90 мин',
+                price: '500 ₽',
+                spots: 5,
+                maxSpots: 7
+            },
+            {
+                id: 2,
+                title: 'Электричество: Основы',
+                grade: '8-9',
+                date: '2026-01-07',
+                time: '18:00',
+                duration: '90 мин',
+                price: '500 ₽',
+                spots: 3,
+                maxSpots: 7
+            },
+            {
+                id: 3,
+                title: 'Оптика и свет',
+                grade: '9-10',
+                date: '2026-01-09',
+                time: '19:00',
+                duration: '90 мин',
+                price: '500 ₽',
+                spots: 2,
+                maxSpots: 7
+            },
+            {
+                id: 4,
+                title: 'Энергия и работа',
+                grade: '7-8',
+                date: '2026-01-12',
+                time: '17:00',
+                duration: '90 мин',
+                price: '500 ₽',
+                spots: 5,
+                maxSpots: 7
+            }
+        ];
+
+        const testQuestions = [
+            {
+                question: 'Что такое сила?',
+                options: [
+                    'Мера взаимодействия между телами',
+                    'Скорость движения',
+                    'Расстояние между объектами',
+                    'Время падения'
+                ],
+                correct: 0
+            },
+            {
+                question: 'Чему равна скорость света?',
+                options: [
+                    '3 × 10⁵ м/с',
+                    '3 × 10⁶ м/с',
+                    '3 × 10⁸ м/с',
+                    '3 × 10¹⁰ м/с'
+                ],
+                correct: 2
+            },
+            {
+                question: 'Первый закон Ньютона гласит:',
+                options: [
+                    'F = ma',
+                    'Тело остаётся в покое или движется равномерно, если на него не действуют силы',
+                    'Энергия не создаётся и не уничтожается',
+                    'Сила тяжести всегда направлена вниз'
+                ],
+                correct: 1
+            },
+            {
+                question: 'Какая единица измерения работы?',
+                options: [
+                    'Ватт (Вт)',
+                    'Джоуль (Дж)',
+                    'Ньютон (Н)',
+                    'Герц (Гц)'
+                ],
+                correct: 1
+            },
+            {
+                question: 'Что происходит с молекулами при нагревании?',
+                options: [
+                    'Уменьшается их количество',
+                    'Увеличивается их скорость',
+                    'Они исчезают',
+                    'Они становятся больше'
+                ],
+                correct: 1
+            }
+        ];
+
+        const reviews = [
+            {
+                author: 'Настя Иванова',
+                grade: '8 класс',
+                stars: 5,
+                text: 'Я долго не понимала электричество. А на занятии с преподавателем все стало ясно! Спасибо за доступное объяснение.'
+            },
+            {
+                author: 'Родители Мити Петрова',
+                grade: '7 класс',
+                stars: 5,
+                text: 'Сын очень доволен занятиями. Оценки улучшились, плюс ребёнок стал интересоваться физикой. Рекомендуем!'
+            },
+            {
+                author: 'Максим Смирнов',
+                grade: '9 класс',
+                stars: 5,
+                text: 'Лучший репетитор из всех, с кем я занимался. Объясняет просто и интересно. Записался ещё на месяц.'
+            },
+            {
+                author: 'Ольга (мама Полины)',
+                grade: '8 класс',
+                stars: 5,
+                text: 'После занятий дочка перестала бояться контрольных по физике. Видно, что она реально понимает материал, а не зубрит.'
+            }
+        ];
+
+        const faqData = [
+            {
+                question: 'Подойдёт ли мне этот формат?',
+                answer: 'Да, если вы хотите реально понимать физику, а не просто зубрить. Мой подход работает для разных уровней — от полного нуля до продвинутых.'
+            },
+            {
+                question: 'Что если я что-то не понял на занятии?',
+                answer: 'После занятия вы получите запись, материалы и домашнее задание. Можете пересмотреть, потренироваться. Плюс вы всегда можете задать вопрос в личном чате.'
+            },
+            {
+                question: 'Будет ли запись групповых занятий?',
+                answer: 'Да, конечно! Все групповые занятия записываются и отправляются участникам. Можете пересмотреть в любой момент.'
+            },
+            {
+                question: 'Как проходит индивидуальное занятие?',
+                answer: 'Вы выбираете удобное время в календаре. Перед занятием я отправлю ссылку на видеовызов. Занятие 60 минут, всё внимание сосредоточено именно на вас.'
+            },
+            {
+                question: 'Какова стоимость?',
+                answer: 'Групповое занятие: 500 ₽. Индивидуальное: 800 ₽ за 60 минут. Пакеты из 5 занятий — скидка 10%.'
+            },
+            {
+                question: 'Как я оплачиваю?',
+                answer: 'После заполнения формы записи я отправлю вам реквизиты для оплаты. Поддерживаю переводы через ЮМани, СБП и банк.'
+            }
+        ];
+
+        let currentMonth = new Date();
+        let selectedDate = null;
+        let selectedTime = null;
+        let selectedClass = null;
+
+        // Available time slots for each day
+        const timeSlots = {
+            'morning': ['09:00', '10:00', '11:00'],
+            'afternoon': ['14:00', '15:00', '16:00'],
+            'evening': ['17:00', '18:00', '19:00']
+        };
+
+        // Booked slots (date: [time1, time2, ...])
+        const bookedSlots = {
+            '2026-01-06': ['09:00', '17:00'],
+            '2026-01-07': ['14:00', '15:00'],
+            '2026-01-13': ['18:00', '19:00']
+        };
+
+        // Initialize
+        function init() {
+            renderGroupClasses();
+            renderCalendar();
+            renderTestQuestions();
+            renderReviews();
+            renderFAQ();
+            updateMonthDisplay();
+        }
+
+        // Classes
+        function renderGroupClasses() {
+            const container = document.getElementById('groupClasses');
+            container.innerHTML = groupClasses.map(cls => `
+                <div class="class-card" onclick="selectGroupClass(${cls.id})">
+                    <div class="class-header">
+                        <div class="class-title">${cls.title}</div>
+                        <div class="class-grade">${cls.grade}</div>
+                    </div>
+                    <div class="class-info">
+                        <div class="class-info-row">
+                            <span class="class-label">📅 Дата:</span>
+                            <span>${formatDate(cls.date)} в ${cls.time}</span>
+                        </div>
+                        <div class="class-info-row">
+                            <span class="class-label">⏱️ Длительность:</span>
+                            <span>${cls.duration}</span>
+                        </div>
+                        <div class="class-info-row">
+                            <span class="class-label">💰 Цена:</span>
+                            <span>${cls.price}</span>
+                        </div>
+                        <div class="class-info-row">
+                            <span class="class-label">👥 Мест:</span>
+                            <span class="class-places ${cls.spots === 0 ? 'full' : ''}">${cls.spots}/${cls.maxSpots}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Записаться →</button>
+                </div>
+            `).join('');
+        }
+
+        function selectGroupClass(id) {
+            selectedClass = groupClasses.find(c => c.id === id);
+            document.getElementById('modalTitle').textContent = 'Запись на групповое занятие';
+            document.getElementById('selectedClassInfo').style.display = 'block';
+            document.getElementById('classInfoText').textContent = 
+                `${selectedClass.title} • ${formatDate(selectedClass.date)} в ${selectedClass.time} • ${selectedClass.price}`;
+            document.getElementById('bookingForm').reset();
+            document.getElementById('successMessage').classList.remove('active');
+            document.getElementById('bookingModal').classList.add('active');
+        }
+
+        // Calendar
+        function renderCalendar() {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+            
+            // Empty cells
+            for (let i = 0; i < (firstDay || 7) - 1; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-day empty';
+                calendar.appendChild(empty);
+            }
+            
+            // Days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                const date = new Date(year, month, day);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                // Booked dates (hardcoded for demo)
+                const bookedDates = ['2026-01-05', '2026-01-12', '2026-01-18'];
+                const isBooked = bookedDates.includes(dateStr);
+                const isPast = date < new Date();
+                
+                dayEl.className = 'calendar-day';
+                if (isPast) {
+                    dayEl.classList.add('empty');
+                } else if (isBooked) {
+                    dayEl.classList.add('booked');
+                } else {
+                    dayEl.classList.add('available');
+                    dayEl.onclick = () => selectDate(dateStr, dayEl);
+                }
+                
+                dayEl.textContent = day;
+                calendar.appendChild(dayEl);
+            }
+        }
+
+        function selectDate(dateStr, element) {
+            // Remove previous selection
+            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+            selectedDate = dateStr;
+            selectedTime = null;
+            
+            // Render time slots
+            renderTimeSlots(dateStr);
+            
+            // Show time slots container
+            document.getElementById('timeSlotsContainer').style.display = 'block';
+            // Format date for display using the same formatDate function
+            document.getElementById('selectedDateDisplay').textContent = formatDate(dateStr);
+        }
+
+        function renderTimeSlots(dateStr) {
+            const container = document.getElementById('timeSlots');
+            container.innerHTML = '';
+            
+            // Get all available time slots
+            const allSlots = [...timeSlots.morning, ...timeSlots.afternoon, ...timeSlots.evening];
+            const booked = bookedSlots[dateStr] || [];
+            
+            allSlots.forEach(time => {
+                const timeEl = document.createElement('div');
+                timeEl.className = 'time-slot';
+                timeEl.textContent = time;
+                
+                if (booked.includes(time)) {
+                    timeEl.classList.add('booked');
+                } else {
+                    timeEl.onclick = () => selectTime(time, timeEl);
+                }
+                
+                container.appendChild(timeEl);
+            });
+        }
+
+        function selectTime(time, element) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+            selectedTime = time;
+            document.getElementById('confirmDateBtn').disabled = false;
+        }
+
+        function previousMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            renderCalendar();
+            updateMonthDisplay();
+        }
+
+        function nextMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+            renderCalendar();
+            updateMonthDisplay();
+        }
+
+        function updateMonthDisplay() {
+            const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                           'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+            document.getElementById('currentMonth').textContent = 
+                `${months[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
+        }
+
+        // Test
+        function renderTestQuestions() {
+            const container = document.getElementById('testQuestions');
+            container.innerHTML = testQuestions.map((q, idx) => `
+                <div class="test-question">
+                    <h4>${idx + 1}. ${q.question}</h4>
+                    <div class="test-options">
+                        ${q.options.map((opt, optIdx) => `
+                            <label class="test-option">
+                                <input type="radio" name="question${idx}" value="${optIdx}" required>
+                                ${opt}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function submitTest() {
+            const form = document.getElementById('bookingForm');
+            let correct = 0;
+            
+            testQuestions.forEach((q, idx) => {
+                const selected = document.querySelector(`input[name="question${idx}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    correct++;
+                }
+            });
+            
+            const percentage = Math.round((correct / testQuestions.length) * 100);
+            let level = '';
+            let advice = '';
+            
+            if (percentage < 40) {
+                level = 'Начинающий';
+                advice = 'Рекомендую групповые занятия по основам. Мы проработаем фундамент! 💪';
+            } else if (percentage < 70) {
+                level = 'Средний';
+                advice = 'Хороший уровень! Можем углубить знания и улучшить оценки. 📚';
+            } else {
+                level = 'Продвинутый';
+                advice = 'Отлично! Готовы к сложным темам и подготовке к итоговым контрольным. 🚀';
+            }
+            
+            document.getElementById('testResult').innerHTML = `
+                <h3>Ваш результат: ${percentage}%</h3>
+                <p style="font-size: 1.2rem; margin: 1rem 0;">Уровень: <strong style="color: var(--color-accent);">${level}</strong></p>
+                <p>${advice}</p>
+                <button class="btn btn-primary" onclick="openGroupModal()" style="margin-top: 1rem;">Записаться на занятие →</button>
+            `;
+            document.getElementById('testResult').classList.add('active');
+        }
+
+        // Reviews
+        function renderReviews() {
+            const container = document.getElementById('reviewsContainer');
+            container.innerHTML = reviews.map(review => `
+                <div class="review-card">
+                    <div class="review-stars">${'⭐'.repeat(review.stars)}</div>
+                    <p class="review-text">"${review.text}"</p>
+                    <div class="review-author">${review.author}</div>
+                    <div class="review-grade">${review.grade}</div>
+                </div>
+            `).join('');
+        }
+
+        // FAQ
+        function renderFAQ() {
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = faqData.map((item, idx) => `
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <span>${item.question}</span>
+                        <span class="faq-arrow">▼</span>
+                    </div>
+                    <div class="faq-answer">${item.answer}</div>
+                </div>
+            `).join('');
+        }
+
+        function toggleFAQ(element) {
+            element.classList.toggle('active');
+        }
+
+        // Forms & Modals
+        function openGroupModal() {
+            selectGroupClass(1); // Default to first class
+        }
+
+        function openIndividualModal() {
+            document.getElementById('modalTitle').textContent = 'Запись на индивидуальное занятие';
+            document.getElementById('selectedClassInfo').style.display = 'none';
+            document.getElementById('bookingForm').reset();
+            document.getElementById('successMessage').classList.remove('active');
+            document.getElementById('bookingModal').classList.add('active');
+            
+            if (selectedDate && selectedTime) {
+                document.getElementById('classInfoText').textContent = `${formatDate(selectedDate)} в ${selectedTime} • 800 ₽`;
+                document.getElementById('selectedClassInfo').style.display = 'block';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('studentName').value;
+            const grade = document.getElementById('grade').value;
+            const contact = document.getElementById('contact').value;
+            const goal = document.getElementById('goal').value;
+            
+            // Here you would normally send data to backend/email service
+            console.log('Booking submitted:', { name, grade, contact, goal, selectedClass, selectedDate, selectedTime });
+            
+            document.getElementById('successMessage').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('bookingForm').reset();
+            }, 1500);
+        }
+
+        // Utilities
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            const days = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+            const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+            return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+        }
+
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.remove('active');
+        }
+
+        function switchTab(tab) {
+            document.getElementById('groupContent').style.display = tab === 'group' ? 'block' : 'none';
+            document.getElementById('individualContent').style.display = tab === 'individual' ? 'block' : 'none';
+            
+            document.getElementById('groupTab').classList.toggle('btn-primary', tab === 'group');
+            document.getElementById('groupTab').classList.toggle('btn-secondary', tab !== 'group');
+            document.getElementById('individualTab').classList.toggle('btn-primary', tab === 'individual');
+            document.getElementById('individualTab').classList.toggle('btn-secondary', tab !== 'individual');
+        }
+
+        // Close modal on outside click
+        document.getElementById('bookingModal').addEventListener('click', (e) => {
+            if (e.target.id === 'bookingModal') closeModal();
+        });
+
+        // Initialize on load
+        init();
+    </script>
+</body>
 </html>
