@@ -38,3 +38,22 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.build-info {
+  margin: 30px auto;
+  padding: 20px;
+  max-width: 500px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  color: #333;
+  font-family: Arial, sans-serif;
+}
+
+.build-info h3 {
+  margin-top: 0;
+}
+
+.build-info p {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
