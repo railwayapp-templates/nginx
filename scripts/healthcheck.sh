@@ -1,16 +1,29 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-set -euo pipefail
+set -eu
 
-URL="${1:-http://127.0.0.1:8080/healthz}"
+URL="${1:-http://localhost:8080}"
 
-echo "Checking application health: $URL"
+echo "Checking application health..."
+echo "Target URL: $URL"
 
-STATUS_CODE=$(curl -sS -o /dev/null -w "%{http_code}" "$URL" || true)
-
-if [[ "$STATUS_CODE" != "200" ]]; then
-    echo "Health check failed. HTTP status: $STATUS_CODE"
+if ! command -v curl >/dev/null 2>&1; then
+    echo "ERROR: curl is not installed." >&2
     exit 1
 fi
 
-echo "Health check passed. HTTP status: $STATUS_CODE"
+if HTTP_STATUS=$(curl -sS -o /dev/null -w '%{http_code}' \
+    --connect-timeout 5 --max-time 15 "$URL"); then
+    :
+else
+    echo "ERROR: Unable to connect to $URL" >&2
+    exit 1
+fi
+
+if [ "$HTTP_STATUS" = "200" ]; then
+    echo "SUCCESS: Application is healthy (HTTP $HTTP_STATUS)"
+    exit 0
+else
+    echo "ERROR: Application returned HTTP $HTTP_STATUS (expected 200)" >&2
+    exit 1
+fi

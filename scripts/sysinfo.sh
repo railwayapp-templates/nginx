@@ -1,23 +1,57 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-set -euo pipefail
+set -eu
 
-echo "===== SYSTEM INFORMATION ====="
+echo "=================================="
+echo "       SYSTEM INFORMATION"
+echo "=================================="
 
-echo "Hostname:"
+echo ""
+echo "[USER INFORMATION]"
+printf "Current user: "
+id -un
+
+printf "Effective UID: "
+id -u
+
+echo ""
+echo "[HOST INFORMATION]"
+printf "Hostname: "
 hostname
 
-echo "Operating System:"
-uname -a
+printf "Kernel release: "
+uname -r
 
-echo "Memory Usage:"
-free -h
+printf "System date: "
+date '+%Y-%m-%dT%H:%M:%S%z'
 
-echo "Disk Usage:"
+echo ""
+echo "[DISK USAGE]"
 df -h
 
-echo "Current User:"
-whoami
+echo ""
+echo "[MEMORY USAGE]"
 
-echo "System Uptime:"
-uptime
+if command -v free >/dev/null 2>&1; then
+    free -h
+elif [ -r /proc/meminfo ]; then
+    cat /proc/meminfo
+else
+    echo "Memory information unavailable"
+fi
+
+echo ""
+echo "[DOCKER DAEMON STATUS]"
+
+if ! command -v docker >/dev/null 2>&1; then
+    echo "Docker: NOT INSTALLED"
+elif docker info >/dev/null 2>&1; then
+    echo "Docker: RUNNING"
+else
+    echo "Docker: NOT RUNNING OR NOT ACCESSIBLE"
+fi
+
+echo ""
+echo "=================================="
+echo "       END OF REPORT"
+echo "=================================="
