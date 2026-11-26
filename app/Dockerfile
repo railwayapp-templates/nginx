@@ -1,6 +1,6 @@
 FROM nginx:1.27-alpine
 
-ARG BUILD_ID=local ARG BUILD_VERSION=dev ARG BUILD_DATE=unknown
+ARG BUILD_ID=local ARG BUILD_VERSION=dev ARG BUILD_DATE=unknown ARG BUILD_SHA=local
 
 COPY . /usr/share/nginx/html
 
