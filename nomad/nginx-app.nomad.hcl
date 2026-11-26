@@ -59,7 +59,7 @@ job "devops-final-task-nginx" {
       driver = "docker"
 
       config {
-        image = "ghcr.io/samson-olawoyin/devops-final-task-nginx:3"
+        image = "ghcr.io/samson-olawoyin/devops-final-task-nginx:latest"
         ports = ["http"]
       }
 
